@@ -1,3 +1,5 @@
+package assignment1.samples;
+
 /**
  * 
  * @author hansgaiser
