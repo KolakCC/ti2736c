@@ -1,8 +1,4 @@
-import assignment1.MinHash;
-
-import java.util.List;
-import java.util.Set;
-
+package assignment1.samples;
 
 public class main {
 	
@@ -11,9 +7,32 @@ public class main {
 	}
 	
 	public static void exercise1_2() {
-		// ADD CODE HERE
-		
-		//exercise1_3(mh);
+        MinHash minHash = new MinHash();
+        minHash.addHashFunction(new HashFunction(1,1));
+        minHash.addHashFunction(new HashFunction(3,1));
+
+        ShingleSet shingleSet1 = new ShingleSet(1);
+        shingleSet1.shingleString("ad");
+
+        ShingleSet shingleSet2 = new ShingleSet(1);
+        shingleSet2.shingleString("c");
+
+        ShingleSet shingleSet3 = new ShingleSet(1);
+        shingleSet3.shingleString("bde");
+
+        ShingleSet shingleSet4 = new ShingleSet(1);
+        shingleSet4.shingleString("acd");
+
+        minHash.addSet(shingleSet1);
+        minHash.addSet(shingleSet2);
+        minHash.addSet(shingleSet3);
+        minHash.addSet(shingleSet4);
+
+        minHash.computeSignature();
+
+        MinHash randomSignatures = new MinHash();
+        randomSignatures.addRandomHashFunctions(100);
+		exercise1_3(randomSignatures);
 	}
 	
 	public static void exercise1_3(MinHash mh) {

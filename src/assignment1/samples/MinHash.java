@@ -91,6 +91,18 @@ public class MinHash {
 		
 		MinHashSignature result = new MinHashSignature(hashes.size(), sets.size());
 		List<String> spaceList = new ArrayList<String>(space);
+
+        for (String x : spaceList) {
+            for (int s = 0; s < sets.size(); s++) {
+                ShingleSet set = sets.get(s);
+                if (set.contains(x)) {
+                    for (int h = 0; h < hashes.size(); h++) {
+                        HashFunction function = hashes.get(h);
+                        result.set(h, s, Math.min(function.hashCode(x.hashCode(), spaceList.size()), result.get(h, s)));
+                    }
+                }
+            }
+        }
 		
 		// ADD CODE HERE
 		
