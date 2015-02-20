@@ -1,5 +1,7 @@
 package assignment1.samples;
 
+import assignment1.ShingleSetUtils;
+
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -34,7 +36,7 @@ public class ShingleSet extends TreeSet<String> implements SortedSet<String> {
 	 * @param s The string that is to be transformed to shingles.
 	 */
 	public void shingleString(String s) {
-		// ADD CODE HERE
+        ShingleSetUtils.createShingles(this,s,k);
 	}
 	
 	/**
