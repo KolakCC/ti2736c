@@ -42,8 +42,10 @@ public class Perceptron {
 			for (int i = 0; i < fv.size(); i++)
 				weights.add(0.0);
 		}
-		
-		// add code here
+        // add code here
+        for(int i = 0; i < weights.size(); i++){
+            weights.set(i, weights.get(i) + learningRate * fv.get(i) * fv.getLabel());
+        }
 	}
 
 	/**
