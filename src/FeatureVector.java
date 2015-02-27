@@ -35,8 +35,12 @@ public class FeatureVector extends ArrayList<Double> {
 		assert(weights.size() == size());
 
 		double result = 0.0;
-		
-		// add code here
+
+        for (Double d : this) {
+            for(Double d2 : weights) {
+                result+= d * d2;
+            }
+        }
 
 		return result;
 	}
@@ -50,8 +54,12 @@ public class FeatureVector extends ArrayList<Double> {
 		assert(vector.size() == size());
 
 		double result = 0.0;
-		
-		// add code here
+
+        for (Double d : this) {
+            for(Double d2 : vector) {
+                result+= Math.pow(d - d2, 2);
+            }
+        }
 
 		return Math.sqrt(result);
 	}
