@@ -1,5 +1,8 @@
 package assignment1.samples;
 
+import java.util.List;
+import java.util.Set;
+
 public class main {
 	
 	public static void exercise1_1() {
@@ -31,12 +34,23 @@ public class main {
         minHash.computeSignature();
 
         MinHash randomSignatures = new MinHash();
+        randomSignatures.addSet(shingleSet1);
+        randomSignatures.addSet(shingleSet2);
+        randomSignatures.addSet(shingleSet3);
+        randomSignatures.addSet(shingleSet4);
         randomSignatures.addRandomHashFunctions(100);
 		exercise1_3(randomSignatures);
 	}
 	
 	public static void exercise1_3(MinHash mh) {
-		// ADD CODE HERE
+        Set<List<Integer>> candidates = LSH.computeCandidates(mh.computeSignature(),5,5);
+        for (List<Integer> candidate : candidates) {
+            int i1 = candidate.get(0);
+            int i2 = candidate.get(1);
+            if (mh.getSet(i1).jaccardDistance(mh.getSet(i2)) < 0.5) {
+                System.out.println(i1 + " - " + i2);
+            }
+        }
 	}
 
 	/**
