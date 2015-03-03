@@ -36,10 +36,8 @@ public class FeatureVector extends ArrayList<Double> {
 
 		double result = 0.0;
 
-        for (Double d : this) {
-            for(Double d2 : weights) {
-                result+= d * d2;
-            }
+        for (int i = 0; i < weights.size(); i++) {
+            result += this.get(i) * weights.get(i);
         }
 
 		return result;
