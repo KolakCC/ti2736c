@@ -53,12 +53,11 @@ public class FeatureVector extends ArrayList<Double> {
 
 		double result = 0.0;
 
-        for (Double d : this) {
-            for(Double d2 : vector) {
-                result+= Math.pow(d - d2, 2);
-            }
+        for (int i = 0; i < size(); i++) {
+            result += Math.pow (this.get(i) - vector.get(i), 2);
         }
 
+        //System.out.printf("Root %f = %f%n", result, Math.sqrt(result));
 		return Math.sqrt(result);
 	}
 

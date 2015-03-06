@@ -39,9 +39,6 @@ public class NearestNeighbour {
      * @return Returns the label assigned to the query.
      */
     public int predict(List<Double> features, int k) {
-        // the result
-        int label = -1;
-
         //
         // 1. Calculate the distance of the object to each element in the dataset.
         ArrayList<Measurement> measurements = new ArrayList<Measurement>();

@@ -19,7 +19,7 @@ public class main {
 		DigitFrame digitFrame = new DigitFrame("Perceptron");
         Dataset dataset = new Dataset("data/train_digits.txt", true);
 
-        Perceptron perceptron = new Perceptron(0.5d);
+        Perceptron perceptron = new Perceptron(1d);
         perceptron.updateWeights(dataset);
         perceptron.updateWeights(dataset);
         //perceptron.updateWeights(dataset);
@@ -43,40 +43,36 @@ public class main {
 		// add code here
         int k = 3;
         NearestNeighbour nearestNeighbour = new NearestNeighbour();
-        NearestNeighbourPlotter nearestNeighbourPlotter = new NearestNeighbourPlotter(k);
         nearestNeighbour.readData("data/banana.txt");
+        NearestNeighbourPlotter nearestNeighbourPlotter = new NearestNeighbourPlotter(k);
         nearestNeighbourPlotter.plotData(nearestNeighbour);
 
 	}
 	
 	public static void nearestNeighbourDigits() {
-        DigitFrame digitFrame = new DigitFrame("Perceptron");
-        Dataset dataset = new Dataset("data/train_digits.txt", true);
 
-        Perceptron perceptron = new Perceptron(0.5d);
-        perceptron.updateWeights(dataset);
-        perceptron.updateWeights(dataset);
-        //perceptron.updateWeights(dataset);
-
-        Dataset testDataset = new Dataset("data/test_digits.txt", true);
+        int k = 3;
+        NearestNeighbour nearestNeighbour = new NearestNeighbour();
+        //NearestNeighbourPlotter nearestNeighbourPlotter = new NearestNeighbourPlotter(k);
+        nearestNeighbour.readData("data/train_digits.txt");
         int misclassified = 0;
-        for (FeatureVector fv : testDataset) {
-            int predicted = perceptron.predict(fv);
+        for (FeatureVector fv : nearestNeighbour.dataset) {
+            int predicted = nearestNeighbour.predict(fv, k);
             if (predicted != fv.getLabel()) {
-                new DigitFrame("Misclassified " + misclassified, fv, 8, 8);
                 misclassified++;
+                System.out.println("Misclassified " + misclassified);
             }
         }
 
-        System.out.println("Miss rate: " + ((double) misclassified / (double) testDataset.size()));
+        System.out.println("Miss rate: " + ((double) misclassified / (double) nearestNeighbour.dataset.size()));
 
-        digitFrame.showImage(perceptron.getWeights(), 8, 8);
+        //nearestNeighbourPlotter.plotData(nearestNeighbour);
 	}
 
 	public static void main(String[] args) {
 		//perceptron();
-		//perceptronDigits();
-		nearestNeighbour();
+		perceptronDigits();
+		//nearestNeighbour();
 		//nearestNeighbourDigits();
 	}
 

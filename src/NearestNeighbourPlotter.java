@@ -56,7 +56,7 @@ public class NearestNeighbourPlotter implements ChartMouseListener {
 				);
 
 		frame = new ChartFrame("Perceptron", chart);
-		frame.pack();
+		frame.setSize(700,700);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.getChartPanel().addChartMouseListener(this);

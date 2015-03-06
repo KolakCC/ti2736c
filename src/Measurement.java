@@ -51,7 +51,7 @@ class Measurement implements Comparable<Measurement> {
 	 */
 	@Override
 	public String toString() {
-		return "<" + featureVector + ", " + distance + ">";
+		return "<" + distance + ", " + featureVector + ">";
 	}
 
 }
