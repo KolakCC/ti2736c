@@ -32,6 +32,22 @@ public class TaxationPageRank extends PageRank {
 
         // FILL IN YOUR CODE HERE
 
+        Matrix e = new Matrix(data.size(), 1);
+        for (int i = 0; i < data.size(); i++) {
+            e.set(i, 0, 1d);
+        }
+
+        //double beta = 0.8d;
+
+
+
+        transitionMatrix = constructTransitionMatrix();
+        randomSurfer = getRandomSurferVector();
+        double n = data.size();
+        for (int i = 0; i < iterations; i++) {
+            randomSurfer = transitionMatrix.dot(randomSurfer).multiply(beta).add(e.multiply(1 - beta).multiply(1 / n));
+        }
+
 		// fill the results, match names with PageRank values
 		int count = 0;
 		for (String s: data.keySet()) {
