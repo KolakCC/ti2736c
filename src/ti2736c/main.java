@@ -1,5 +1,10 @@
 package ti2736c;
 
+import project.LinearBlend;
+import project.MeanAlgorithm;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class main {
@@ -27,21 +32,10 @@ public class main {
 
     public static RatingList predictRatings(UserList userList,
                                             MovieList movieList, RatingList ratingList, RatingList predRatings) {
-
-        // Compute mean of ratings
-        double mean = ratingList.get(0).getRating();
-        for (int i = 1; i < ratingList.size(); i++) {
-            mean = ((double) i / ((double) i + 1.0)) * mean
-                    + (1.0 / ((double) i + 1.0))
-                    * ratingList.get(i).getRating();
-        }
-
-        // Predict mean everywhere
-        for (int i = 0; i < predRatings.size(); i++) {
-            predRatings.get(i).setRating(mean);
-        }
-
-        // Return predictions
-        return predRatings;
+        LinearBlend blend = new LinearBlend();
+        List<RatingList> toBlend = new ArrayList<RatingList>();
+        toBlend.add(new MeanAlgorithm().getPrediction(userList, movieList, ratingList, predRatings));
+        RatingList result = blend.blend(toBlend);
+        return result;
     }
 }
