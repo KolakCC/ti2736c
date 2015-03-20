@@ -48,6 +48,15 @@ public class PCY extends APriori {
 			}
 		} else {
 			// add code here
+
+            Set<StringSet> superCandidates = super.constructCandidates(filteredCandidates, k);
+            for (Set<String> c : superCandidates) {
+                int index = Math.abs(c.hashCode()) % bucketSize;
+                if (buckets.get(index) < supportThreshold) {
+                    superCandidates.remove(c);
+                }
+            }
+            candidates = superCandidates;
 		}
 
 		return candidates;
@@ -73,7 +82,13 @@ public class PCY extends APriori {
 		// the result
 		Map<StringSet, Integer> candidatesCount = new HashMap<StringSet, Integer>();
 
-		// add code here
+		for (Set<String> basket : baskets) {
+            Set<StringSet> basketSet = getSubsets(basket, k+1);
+            for (StringSet subset : basketSet) {
+                int index = Math.abs(subset.hashCode()) % bucketSize;
+                buckets.set(index, buckets.get(index) + 1);
+            }
+        }
 
 		return candidatesCount;
 	}
