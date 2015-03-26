@@ -37,7 +37,6 @@ public class Cluster extends ArrayList<FeatureVector> {
 	
 	/**
 	 * Constructor.
-	 * @param key
 	 */
 	public Cluster() {
 		changed = true;
@@ -128,8 +127,14 @@ public class Cluster extends ArrayList<FeatureVector> {
 		double dist = 0.0;
 		
 		// add code here
-		
-		return dist;
+		for(FeatureVector fv: this){
+			for(FeatureVector fvOther: other){
+				for (int i = 0; i < fvOther.size(); i++) {
+					dist += Math.pow((fv.get(i) - fvOther.get(i)), 2);
+				}
+			}
+		}
+		return Math.sqrt(dist);
 	}
 	
 	/**

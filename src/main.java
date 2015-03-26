@@ -3,6 +3,8 @@ public class main {
 	
 	private static void hierarchical() {
 		// add code here
+		HierarchicalClusteringPlotter hcp = new HierarchicalClusteringPlotter(3, "data/cluster.txt");
+
 	}
 	
 	private static void hierarchicalDigits() {
@@ -22,7 +24,7 @@ public class main {
 	}
 
 	public static void main(String[] args) {
-		//hierarchical();
+		hierarchical();
 		//hierarchicalDigits();
 		//kmeans();
 		//kmeansTuneK();
