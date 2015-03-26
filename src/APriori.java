@@ -159,13 +159,17 @@ public class APriori {
         Set<StringSet> filteredCandidates = null;
 
         for (int i = 1; i < k; i++) {
-            filteredCandidates = constructCandidates(filteredCandidates, i);
-            System.out.println(i + ": " + filteredCandidates);
+
+            Set<StringSet> newCandidates = constructCandidates(filteredCandidates, i);
+            System.out.println(i + ": " + newCandidates);
+
+            Map<StringSet, Integer> counts = countCandidates(newCandidates, i);
+            System.out.println("counts: " + counts);
+
+            filteredCandidates = filterCandidates(counts);
+            System.out.println("filtered: " + filteredCandidates);
         }
-        Map<StringSet, Integer> counts = countCandidates(filteredCandidates, k);
-        System.out.println("counts: " + counts);
-        filteredCandidates = filterCandidates(counts);
-        System.out.println("filtered: " + filteredCandidates);
+
 
         return filteredCandidates;
     }

@@ -50,7 +50,8 @@ public class PCY extends APriori {
 			// add code here
 
             Set<StringSet> superCandidates = super.constructCandidates(filteredCandidates, k);
-            for (Set<String> c : superCandidates) {
+            Set<StringSet> superCandidatesCopy = new HashSet<StringSet>(super.constructCandidates(filteredCandidates, k));
+            for (Set<String> c : superCandidatesCopy) {
                 int index = Math.abs(c.hashCode()) % bucketSize;
                 if (buckets.get(index) < supportThreshold) {
                     superCandidates.remove(c);
@@ -80,7 +81,7 @@ public class PCY extends APriori {
 			buckets.add(0);
 
 		// the result
-		Map<StringSet, Integer> candidatesCount = new HashMap<StringSet, Integer>();
+		Map<StringSet, Integer> candidatesCount = super.countCandidates(candidates, k);
 
 		for (Set<String> basket : baskets) {
             Set<StringSet> basketSet = getSubsets(basket, k+1);
