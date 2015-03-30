@@ -8,6 +8,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class RatingList extends ArrayList<Rating> {
+    public RatingList() {
+        super();
+    }
+
+    public RatingList(RatingList rl) {
+        super(rl);
+    }
+
+    public RatingList(int rl) {
+        super(rl);
+    }
 
     // Reads in a file with rating data
     public void readFile(String filename, UserList userList, MovieList movieList) {
@@ -49,6 +60,7 @@ public class RatingList extends ArrayList<Rating> {
             pw = new PrintWriter(filename);
             pw.println("Id,Rating");
             for (int i = 0; i < size(); i++) {
+                //if (get(i).getRating() == null) throw new RuntimeException("Rating is null");
                 pw.println((i + 1) + "," + get(i).getRating());
             }
             pw.close();

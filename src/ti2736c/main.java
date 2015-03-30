@@ -1,9 +1,12 @@
 package ti2736c;
 
+import project.CollaborativeFilteringPredictionAlgorithm;
 import project.LinearBlend;
 import project.MeanAlgorithm;
+import project.PredictionAlgorithm;
 import project.omdb.OMDBMovieAlgorithm;
 
+import javax.sql.rowset.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -25,19 +28,29 @@ public class main {
         predRatings.readFile("data/predictions.csv", userList, movieList);
 
         // Perform rating predictions
-        predictRatings(userList, movieList, ratings, predRatings);
+        RatingList ratings1 = predictRatings(userList, movieList, ratings, predRatings);
 
         // Write result file
-        predRatings.writeResultsFile("submission.csv");
+        ratings1.writeResultsFile("submission.csv");
     }
 
     public static RatingList predictRatings(UserList userList,
                                             MovieList movieList, RatingList ratingList, RatingList predRatings) {
-        LinearBlend blend = new LinearBlend();
-        List<RatingList> toBlend = new ArrayList<RatingList>();
-        toBlend.add(new MeanAlgorithm().getPrediction(userList, movieList, ratingList, predRatings));
-        toBlend.add(new OMDBMovieAlgorithm().getPrediction(userList, movieList, ratingList, predRatings));
-        RatingList result = blend.blend(toBlend);
-        return result;
+        LinearBlend blend = new LinearBlend(userList, movieList, ratingList, predRatings);
+
+        List<PredictionAlgorithm> algorithms = new ArrayList<>();
+        //algorithms.add(new MeanAlgorithm());
+        //algorithms.add(new OMDBMovieAlgorithm());
+        algorithms.add(new CollaborativeFilteringPredictionAlgorithm());
+
+        List<RatingList> toBlend = new ArrayList<>();
+
+        for (PredictionAlgorithm pa: algorithms) {
+            System.out.println("Running algorithm " + pa.getClass().getName());
+            //RatingList copyOfPredictRatings = new RatingList(predRatings);
+            //toBlend.add(pa.getPrediction(userList, movieList, ratingList, copyOfPredictRatings));
+            toBlend.add(pa.getPrediction(userList, movieList, ratingList, predRatings));
+        }
+        return blend.blend(toBlend);
     }
 }

@@ -1,6 +1,7 @@
 package project;
 
 import ti2736c.MovieList;
+import ti2736c.Rating;
 import ti2736c.RatingList;
 import ti2736c.UserList;
 
@@ -10,6 +11,7 @@ import ti2736c.UserList;
 public class MeanAlgorithm extends PredictionAlgorithm {
     @Override
     public RatingList getPrediction(UserList userList, MovieList movieList, RatingList ratingList, RatingList predRatings) {
+        RatingList ret = new RatingList(predRatings.size());
         double mean = ratingList.get(0).getRating();
         for (int i = 1; i < ratingList.size(); i++) {
             mean = ((double) i / ((double) i + 1.0)) * mean
@@ -19,10 +21,11 @@ public class MeanAlgorithm extends PredictionAlgorithm {
 
         // Predict mean everywhere
         for (int i = 0; i < predRatings.size(); i++) {
-            predRatings.get(i).setRating(mean);
+            Rating r = predRatings.get(i);
+            ret.add(new Rating(r.getUser(), r.getMovie(), mean));
         }
 
         // Return predictions
-        return predRatings;
+        return ret;
     }
 }

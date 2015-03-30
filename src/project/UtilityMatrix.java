@@ -16,20 +16,19 @@ import java.util.ArrayList;
 public class UtilityMatrix {
     public static RealMatrix createMatrix(UserList users, MovieList movies, RatingList ratings) {
         // rows are users
-        int rows = users.size();
+        int rows = users.size() + 1;
         // cols are movies
-        int cols = movies.size();
+        int cols = movies.size() + 1;
 
         RealMatrix utility = new Array2DRowRealMatrix(rows, cols);
-        for(Rating r: ratings){
-           utility.addToEntry(r.getUser().getIndex(), r.getMovie().getIndex(), r.getRating());
+        for (Rating r : ratings) {
+            utility.addToEntry(r.getUser().getIndex(), r.getMovie().getIndex(), r.getRating());
         }
         return utility;
     }
 
-    public static RealMatrix computePearsonCorrelation(RealMatrix lsm){
-        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation(lsm);
-        return pearsonsCorrelation.getCorrelationMatrix();
+    public static RealMatrix computePearsonCorrelation(RealMatrix lsm) {
+        return new PearsonsCorrelation(lsm).getCorrelationMatrix();
 
     }
 }

@@ -8,10 +8,19 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 @Generated("org.jsonschema2pojo")
-public class Movie {
+public class OMDBMovie {
+    private int ourID;
+
+    public int getOurID() {
+        return ourID;
+    }
+
+    public void setOurID(int ourID) {
+        this.ourID = ourID;
+    }
+
     @Expose
     private String Title;
     @Expose
@@ -38,7 +47,7 @@ public class Movie {
     //the total amount of genres we have encountered from omdb
     public static final int genreTotalAmount = 17;
 
-    public static double getSimilarity(Movie m1, Movie m2) {
+    public static double getSimilarity(OMDBMovie m1, OMDBMovie m2) {
         //TODO compare on more
         Collection intersection = CollectionUtils.intersection(Arrays.asList(m1.getGenreArray()), Arrays.asList(m2.getGenreArray()));
         return (double) intersection.size() / (double) genreTotalAmount;

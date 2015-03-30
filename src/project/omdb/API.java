@@ -7,9 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
@@ -17,7 +15,7 @@ import org.apache.commons.codec.net.URLCodec;
  * Created by Dereck on 3/16/2015.
  */
 public class API {
-    public static Movie searchMovie(ti2736c.Movie m) throws Exception {
+    public static OMDBMovie searchMovie(ti2736c.Movie m) throws Exception {
         return searchMovie(getSearchTitle(m));
     }
 
@@ -32,7 +30,7 @@ public class API {
         }
     }
 
-    public static Movie searchMovie(String title) throws Exception {
+    public static OMDBMovie searchMovie(String title) throws Exception {
         System.out.println("OMDB API: Search " + title);
         Gson gson = new Gson();
 
@@ -40,7 +38,7 @@ public class API {
         String result = doCall("http://www.omdbapi.com/?t=" + codec.encode(title) + "&y=&plot=short&r=json");
 
         System.out.println(result);
-        Movie movie = gson.fromJson(result, Movie.class);
+        OMDBMovie movie = gson.fromJson(result, OMDBMovie.class);
 
         return movie;
     }
@@ -58,24 +56,23 @@ public class API {
     }
 
     public static String getSearchTitle(String t) throws EncoderException {
-        String name = t;
-        if (t.contains(",_The")) {
+        String withoutYear = t.replaceAll("_\\(.+?\\)$", "");
+        int commaPosition = withoutYear.lastIndexOf(",");
+        if (commaPosition != -1) {
+            withoutYear = withoutYear.substring(commaPosition) + withoutYear.substring(0,commaPosition);
+        }
+        /*if (t.contains(",_The_")) {
             name = "The " + t.replaceAll(",_The", "");
         }
 
-        String[] splitted = name.replaceAll("_", " ").split(" ");
-        String[] dropYear = Arrays.copyOf(splitted, splitted.length - 1);
-        StringBuilder join = new StringBuilder();
+        if (t.contains(",_A_")) {
+            name = "A " + t.replaceAll(",_A_", "");
+        }*/
 
-
-        for (String s : dropYear) {
-            join.append(s);
-            join.append(" ");
-        }
         URLCodec codec = new URLCodec();
-        return codec.encode(join.toString());
+        return codec.encode(withoutYear);
     }
 }
 
-class MovieList extends ArrayList<Movie> {
+class MovieList extends ArrayList<OMDBMovie> {
 }
