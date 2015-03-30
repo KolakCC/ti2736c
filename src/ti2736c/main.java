@@ -2,6 +2,7 @@ package ti2736c;
 
 import project.LinearBlend;
 import project.MeanAlgorithm;
+import project.omdb.OMDBMovieAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class main {
         LinearBlend blend = new LinearBlend();
         List<RatingList> toBlend = new ArrayList<RatingList>();
         toBlend.add(new MeanAlgorithm().getPrediction(userList, movieList, ratingList, predRatings));
+        toBlend.add(new OMDBMovieAlgorithm().getPrediction(userList, movieList, ratingList, predRatings));
         RatingList result = blend.blend(toBlend);
         return result;
     }
