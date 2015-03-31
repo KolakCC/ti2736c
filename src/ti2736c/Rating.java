@@ -34,4 +34,14 @@ public class Rating {
     public void setRating(Double _rating) {
         this.rating = _rating;
     }
+
+
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "user=" + user.getIndex() +
+                ", movie=" + movie.getTitle() +
+                ", rating=" + rating +
+                '}';
+    }
 }
