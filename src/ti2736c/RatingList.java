@@ -1,11 +1,10 @@
 package ti2736c;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class RatingList extends ArrayList<Rating> {
     public RatingList() {
@@ -27,6 +26,7 @@ public class RatingList extends ArrayList<Rating> {
         try {
             br = new BufferedReader(new FileReader(filename));
             while ((line = br.readLine()) != null) {
+                if (line.startsWith("Id,Rating")) continue;
                 String[] ratingData = line.split(";");
                 if (ratingData.length == 3) {
                     add(new Rating(

@@ -1,21 +1,24 @@
 package project;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import ti2736c.MovieList;
+
+import java.util.List;
+
 import ti2736c.Rating;
 import ti2736c.RatingList;
-import ti2736c.UserList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Dereck on 3/5/2015.
  */
 public class LinearBlend {
     RatingList mean;
-    public LinearBlend(UserList userList, MovieList movieList, RatingList ratingList, RatingList predRatings) {
-        mean = new MeanAlgorithm().getPrediction(userList, movieList, ratingList, predRatings);
+    public LinearBlend(PredictionData data, RatingList predRatings) {
+        mean = new MeanAlgorithm().getPrediction(data, predRatings);
+    }
+
+    boolean round = false;
+    public void setRound(boolean r) {
+        round = r;
     }
 
     public RatingList blend(List<RatingList> ratingLists) {
@@ -26,18 +29,28 @@ public class LinearBlend {
             SummaryStatistics summaryStatistics = new SummaryStatistics();
 
             for (RatingList list : ratingLists) {
-                if (list.size() != firstSize) throw new RuntimeException("Rating list size is not the same");
+                if (list.size() != firstSize) {
+                    System.out.println("list.size() = " + list.size());
+                    System.out.println("firstSize = " + firstSize);
+                    throw new RuntimeException("Rating list size is not the same");
+                }
                 Double rating = list.get(ratingIndex).getRating();
                 if (rating != null) {
-                    if (rating > 5) {
-                        throw new RuntimeException("Rating can't be >5");
-                    }
                     summaryStatistics.addValue(rating);
                 }
             }
             double blended = summaryStatistics.getMean();
-            if (blended == Double.NaN) {
+            if (Double.isNaN(blended)) {
                 blended = mean.get(ratingIndex).getRating();
+            }
+
+            if (blended < 1) {
+                blended = 1d;
+            } else if (blended > 5) {
+                blended = 5d;
+            } else {
+                if (round)
+                    blended = (double) Math.ceil(blended);
             }
             Rating rating = new Rating(firstRating.getUser(), firstRating.getMovie(), blended);
             if (rating.getRating() == null) {

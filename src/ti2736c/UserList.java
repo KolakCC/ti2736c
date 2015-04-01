@@ -14,10 +14,7 @@ public class UserList extends ArrayList<User> {
             br = new BufferedReader(new FileReader(filename));
             while ((line = br.readLine()) != null) {
                 String[] userData = line.split(";");
-                add(Integer.parseInt(userData[0]) - 1,
-                        new User(Integer.parseInt(userData[0]), userData[1]
-                                .equals("M"), Integer.parseInt(userData[2]),
-                                Integer.parseInt(userData[3])));
+                add(Integer.parseInt(userData[0]) - 1, new User(Integer.parseInt(userData[0]), userData[1].equals("M"), Integer.parseInt(userData[2]), Integer.parseInt(userData[3])));
             }
         } catch (Exception e) {
             e.printStackTrace();
