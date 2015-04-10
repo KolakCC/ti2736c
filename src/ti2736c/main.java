@@ -6,12 +6,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import project.BeforeData;
 import project.LinearBlend;
-import project.PredictionAlgorithm;
 import project.PredictionData;
-import project.RandomRatingPredictionAlgorithm;
 import project.RatingLoopRunnable;
+import project.WeightedPrediction;
+import project.WeightedRatingList;
+import project.omdb.OMDBScoreAlgorithm;
 
 public class main {
 
@@ -37,27 +37,34 @@ public class main {
     }
 
     public static RatingList predictRatings(UserList userList, MovieList movieList, RatingList ratingList, RatingList predRatings) {
-        List<PredictionAlgorithm> algorithms = new ArrayList<>();
+        List<WeightedPrediction> algorithms = new ArrayList<>();
         //algorithms.add(new MeanAlgorithm());
         //algorithms.add(new OMDBMovieAlgorithm());
-        //algorithms.add(new CachedPredictionAlgorithm("outputs/OMDBMovieAlgorithm 03-31 16-52.csv"));
         //algorithms.add(new CollaborativeFilteringPredictionAlgorithm());
-        //algorithms.add(new CachedPredictionAlgorithm("outputs/CollaborativeFilteringPredictionAlgorithm 03-31 17-59.csv"));
+        //algorithms.add(new CachedPredictionAlgorithm("outputs/CollaborativeFilteringPredictionAlgorithm 04-01 21-20.csv"));
+        //algorithms.add(new RandomRatingPredictionAlgorithm());
+        //algorithms.add(new OMDBItemItemPredictionAlgorithm());
+        //algorithms.add(new WeightedPrediction(1d, new CachedPredictionAlgorithm("outputs/OMDBItemItemPredictionAlgorithm 04-07 15-45.csv")));
+        //algorithms.add(new UserMeanPredictionAlgorithm());
 
-        algorithms.add(new RandomRatingPredictionAlgorithm());
+        //algorithms.add(new WeightedPrediction(1d, new CachedPredictionAlgorithm("outputs/blend1/colla.csv")));
+        //algorithms.add(new WeightedPrediction(1d, new CachedPredictionAlgorithm("outputs/blend1/itemitem.csv")));
+
+        //algorithms.add(new WeightedPrediction(1d, new CollaborativeFilteringPredictionAlgorithm(-1)));
+        algorithms.add(new WeightedPrediction(1d, new OMDBScoreAlgorithm()));
 
 
-        List<BeforeData> beforeRunnables = new ArrayList<>();
-        for (PredictionAlgorithm pa : algorithms) {
-            if (pa.getBeforeRunnable() != null) {
-                pa.getBeforeRunnable().run(userList.size()+1, movieList.size()+1, ratingList.size()+1);
+
+        for (WeightedPrediction pa : algorithms) {
+            if (pa.getAlg().getBeforeRunnable() != null) {
+                pa.getAlg().getBeforeRunnable().run(userList.size()+1, movieList.size()+1, ratingList.size()+1);
             }
         }
 
         List<RatingLoopRunnable> runnables = new ArrayList<>();
-        for (PredictionAlgorithm pa : algorithms) {
-            if (pa.getRunnable() != null) {
-                runnables.add(pa.getRunnable());
+        for (WeightedPrediction pa : algorithms) {
+            if (pa.getAlg().getRunnable() != null) {
+                runnables.add(pa.getAlg().getRunnable());
             }
         }
 
@@ -65,13 +72,17 @@ public class main {
 
         LinearBlend blend = new LinearBlend(data, predRatings);
         blend.setRound(false);
-        List<RatingList> toBlend = new ArrayList<>();
-        for (PredictionAlgorithm pa : algorithms) {
+        blend.setRoundToTenths(true);
+
+        List<WeightedRatingList> toBlend = new ArrayList<>();
+        for (WeightedPrediction pa : algorithms) {
             System.out.println("Running algorithm " + pa.getClass().getName());
-            RatingList result = pa.getPrediction(data, predRatings);
-            result.writeResultsFile("outputs/" + pa.getName() + " " + getTimestamp() + ".csv");
-            toBlend.add(result);
-            System.out.println("Finished algorithm " + pa.getClass().getName() + ", size = " + result.size());
+            RatingList result = pa.getAlg().getPrediction(data, predRatings);
+            if (!pa.getAlg().getName().startsWith("CachedPredictionAlgorithm")) {
+                result.writeResultsFile("outputs/" + pa.getAlg().getName() + " " + getTimestamp() + ".csv");
+            }
+            toBlend.add(new WeightedRatingList(result, pa.getWeight()));
+            System.out.println("Finished algorithm " + pa.getAlg().getClass().getName() + ", size = " + result.size());
         }
         return blend.blend(toBlend);
     }
@@ -80,3 +91,4 @@ public class main {
         return new SimpleDateFormat("MM-dd HH-mm").format(new Date());
     }
 }
+

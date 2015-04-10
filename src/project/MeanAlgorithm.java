@@ -11,6 +11,8 @@ public class MeanAlgorithm extends PredictionAlgorithm {
         super("MeanAlgorithm");
     }
 
+    public static final double CACHE = 3.5813148902975604;
+
     @Override
     public RatingList getPrediction(PredictionData data, RatingList ratingsToPredict) {
         RatingList ret = new RatingList(ratingsToPredict.size());
@@ -20,7 +22,7 @@ public class MeanAlgorithm extends PredictionAlgorithm {
                     + (1.0 / ((double) i + 1.0))
                     * ratingList.get(i).getRating();
         }*/
-        double mean = 3.5813148902975604; // cached
+        double mean = CACHE; // cached
 
         // Predict mean everywhere
         for (int i = 0; i < ratingsToPredict.size(); i++) {

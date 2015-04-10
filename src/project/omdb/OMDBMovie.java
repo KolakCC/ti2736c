@@ -1,13 +1,9 @@
 
 package project.omdb;
 
-import javax.annotation.Generated;
-
 import com.google.gson.annotations.Expose;
-import org.apache.commons.collections.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
+import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
 public class OMDBMovie {
@@ -44,17 +40,12 @@ public class OMDBMovie {
     @Expose
     private String Genre;
 
-    //the total amount of genres we have encountered from omdb
-    public static final int genreTotalAmount = 17;
-
-    public static double getSimilarity(OMDBMovie m1, OMDBMovie m2) {
-        //TODO compare on more
-        Collection intersection = CollectionUtils.intersection(Arrays.asList(m1.getGenreArray()), Arrays.asList(m2.getGenreArray()));
-        return (double) intersection.size() / (double) genreTotalAmount;
-    }
-
     public String[] getGenreArray() {
         return getGenre().split(", ");
+    }
+
+    public String[] getDirectorArray() {
+        return getDirector().split(", ");
     }
 
     /**

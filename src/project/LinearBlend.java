@@ -1,7 +1,5 @@
 package project;
 
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
 import java.util.List;
 
 import ti2736c.Rating;
@@ -17,31 +15,38 @@ public class LinearBlend {
     }
 
     boolean round = false;
+    boolean round10ths = false;
     public void setRound(boolean r) {
         round = r;
     }
+    public void setRoundToTenths(boolean r) {round10ths = r;}
 
-    public RatingList blend(List<RatingList> ratingLists) {
+    public RatingList blend(List<WeightedRatingList> ratingLists) {
         RatingList result = new RatingList();
-        int firstSize = ratingLists.get(0).size();
-        for (int ratingIndex = 0; ratingIndex < ratingLists.get(0).size(); ratingIndex++) {
-            Rating firstRating = ratingLists.get(0).get(ratingIndex);
-            SummaryStatistics summaryStatistics = new SummaryStatistics();
+        int firstSize = ratingLists.get(0).getRatingList().size();
+        for (int ratingIndex = 0; ratingIndex < ratingLists.get(0).getRatingList().size(); ratingIndex++) {
+            Rating firstRating = ratingLists.get(0).getRatingList().get(ratingIndex);
 
-            for (RatingList list : ratingLists) {
-                if (list.size() != firstSize) {
-                    System.out.println("list.size() = " + list.size());
+            double weightedSum = 0d;
+            double weightSum = 0d;
+
+            for (WeightedRatingList list : ratingLists) {
+                if (list.getRatingList().size() != firstSize) {
+                    System.out.println("list.size() = " + list.getRatingList().size());
                     System.out.println("firstSize = " + firstSize);
                     throw new RuntimeException("Rating list size is not the same");
                 }
-                Double rating = list.get(ratingIndex).getRating();
+                Double rating = list.getRatingList().get(ratingIndex).getRating();
                 if (rating != null) {
-                    summaryStatistics.addValue(rating);
+                    weightSum += list.getWeight();
+                    weightedSum += rating * list.getWeight();
                 }
             }
-            double blended = summaryStatistics.getMean();
+
+            double blended = weightedSum / weightSum;
+
             if (Double.isNaN(blended)) {
-                blended = mean.get(ratingIndex).getRating();
+                blended = MeanAlgorithm.CACHE;
             }
 
             if (blended < 1) {
@@ -49,8 +54,10 @@ public class LinearBlend {
             } else if (blended > 5) {
                 blended = 5d;
             } else {
-                if (round)
-                    blended = (double) Math.ceil(blended);
+                if (round10ths)
+                    blended = (double) Math.round(blended * 10) / 10;
+                else if (round)
+                    blended = (double) Math.round(blended);
             }
             Rating rating = new Rating(firstRating.getUser(), firstRating.getMovie(), blended);
             if (rating.getRating() == null) {

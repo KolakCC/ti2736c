@@ -10,9 +10,14 @@ import ti2736c.RatingList;
 import ti2736c.User;
 
 public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorithm {
+    final static double SameProfessionWeight = 3d;
+    final static double SameAgeWeight = 2.6d;
+
     List<DescriptiveStatistics> userStatistics = new ArrayList<>();
 
-    public CollaborativeFilteringPredictionAlgorithm() {
+    int samples;
+
+    public CollaborativeFilteringPredictionAlgorithm(int samples) {
         super("CollaborativeFilteringPredictionAlgorithm");
         this.setBeforeRunnable(new BeforeData() {
             @Override
@@ -29,6 +34,7 @@ public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorit
                 userStatistics.get(r.getUser().getIndex()).addValue(r.getRating());
             }
         });
+        this.samples = samples;
     }
 
     @Override
@@ -44,7 +50,7 @@ public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorit
             double weightedBiasSum = 0;
             double totalWeight = 0;
             List<Rating> otherRatingsOfThisMovie = data.getRatingsOfMovie(toPredict.getMovie());
-            //ist<Rating> otherRatingsOfThisMovieSampled = getRandomSelectionOfList(otherRatingsOfThisMovie, 20);
+            if (samples != -1) otherRatingsOfThisMovie = sample(otherRatingsOfThisMovie, samples);
             //System.out.println("CollaborativeFilteringPredictionAlgorithm: other ratings of this movie = " + otherRatingsOfThisMovie.size());
             for (Rating otherRating : otherRatingsOfThisMovie) {
                 if (otherRating == null) continue;
@@ -55,11 +61,6 @@ public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorit
                 double weight = 0;
 
                 double topPart = 0d;
-
-                //elke film die ze samen gezien hebben
-                //List<Rating> filteredARatings = getRandomSelectionOfList(ratingsGivenByUser.get(a), 20);
-                List<Rating> filteredARatings = data.getUserRatings(a);
-                //System.out.println("CollaborativeFilteringPredictionAlgorithm: get every movie that they both have seen = " + filteredARatings.size());
 
                 DescriptiveStatistics astat = new DescriptiveStatistics();
                 DescriptiveStatistics ustat = new DescriptiveStatistics();
@@ -83,9 +84,23 @@ public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorit
                 //System.out.printf("bottomPart = aDeviation * uDeviation -> %f = %f * %f %n", bottomPart, aDeviation, uDeviation);
 
                 weight = topPart / bottomPart;
-                if (Double.isNaN(weight)) weight = 1;
-                if (Double.isInfinite(weight)) weight = 1;
+                /*if (Double.isNaN(weight)) weight = 1;
+                if (Double.isInfinite(weight)) weight = 1;*/
+                if (Double.isNaN(weight)) weight = -1;
+                if (Double.isInfinite(weight)) weight = -1;
                 if (weight < 0) continue;
+
+                if (toPredictUser.getAge() == otherRating.getUser().getAge()) {
+                    weight *= SameAgeWeight;
+                }
+
+                if (toPredictUser.getProfession() == otherRating.getUser().getProfession()) {
+                    weight *= SameProfessionWeight;
+                }
+
+                //we want weights to be higher if they are already high
+                weight = Math.pow(weight, 3d);
+
                 //System.out.printf("weight = topPart / bottomPart ->  %f = (%f / %f) %n", weight, topPart, bottomPart);
                 totalWeight += weight;
 
@@ -93,7 +108,10 @@ public class CollaborativeFilteringPredictionAlgorithm extends PredictionAlgorit
                 //System.out.printf("weightedBias = uBias * weight ->  %f = (%f * %f) %n", weightedBias, uBias, weight);
                 weightedBiasSum += weightedBias;
             }
-            double prediction = aAverage + (weightedBiasSum / totalWeight);
+            double aPredictedBias = (weightedBiasSum / totalWeight);
+            if (Double.isNaN(aPredictedBias)) aPredictedBias = 0d;
+            if (Double.isInfinite(aPredictedBias)) aPredictedBias = 0d;
+            double prediction = aAverage + aPredictedBias;
             //System.out.printf("aAverage + (weightedBiasSum / totalWeight) ->  %f + (%f / %f) %n", aAverage, weightedBiasSum, totalWeight);
             toPredict.setRating(prediction);
 
